@@ -48,11 +48,33 @@ Return ONLY valid JSON.
 }
 `;
 
-    const response =
-      await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-      });
+    let response;
+    let retries = 3;
+
+    while (retries > 0) {
+    try {
+
+        response =
+        await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt,
+        });
+
+        break;
+
+    } catch (err) {
+
+        retries--;
+
+        if (retries === 0) {
+        throw err;
+        }
+
+        await new Promise(resolve =>
+        setTimeout(resolve, 2000)
+        );
+    }
+    }
 
     res.json({
       result: response.text,
@@ -63,7 +85,8 @@ Return ONLY valid JSON.
     console.error(err);
 
     res.status(500).json({
-      error: "Analysis failed",
+    error:
+        "AI service temporarily busy. Please try again in a few seconds."
     });
 
   }
