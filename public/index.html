@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AlphaLens AI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+  <h1>AlphaLens AI</h1>
+
+  <p class="subtitle">
+    AI-Powered Crypto Alpha Analysis on Mantle
+  </p>
+
+  <button id="connectBtn">
+    Connect Wallet
+  </button>
+
+  <br><br>
+
+  <input
+    id="token"
+    type="text"
+    placeholder="BTC / ETH / MNT"
+  >
+
+  <button onclick="analyzeToken()">
+    Analyze
+  </button>
+
+  <div id="result"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
