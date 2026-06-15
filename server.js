@@ -13,6 +13,10 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/index.html");
+});
+
 app.post("/analyze", async (req, res) => {
   try {
     const { token } = req.body;
@@ -44,7 +48,6 @@ Return ONLY valid JSON.
     });
 
   } catch (err) {
-
     console.error(err);
 
     res.status(500).json({
@@ -53,8 +56,4 @@ Return ONLY valid JSON.
   }
 });
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+module.exports = app;
