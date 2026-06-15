@@ -31,17 +31,23 @@ app.post("/analyze", async (req, res) => {
 
     const { token } = req.body;
 
+    if (!token) {
+      return res.status(400).json({
+        error: "Token is required"
+      });
+    }
+
     const prompt = `
 You are a professional crypto alpha analyst.
 
 Analyze ${token}.
 
-Return ONLY valid JSON.
+Return ONLY valid JSON in exactly this format:
 
 {
   "token":"${token}",
-  "alphaScore":0,
-  "risk":"Low",
+  "alphaScore":75,
+  "risk":"Medium",
   "bullishFactors":["factor1","factor2"],
   "bearishFactors":["factor1","factor2"],
   "recommendation":"short recommendation"
@@ -49,31 +55,36 @@ Return ONLY valid JSON.
 `;
 
     let response;
-    let retries = 3;
+    let lastError;
 
-    while (retries > 0) {
-    try {
+    for (let i = 0; i < 3; i++) {
+      try {
 
         response =
-        await ai.models.generateContent({
+          await ai.models.generateContent({
             model: "gemini-2.5-flash",
             contents: prompt,
-        });
+          });
 
         break;
 
-    } catch (err) {
+      } catch (err) {
 
-        retries--;
+        lastError = err;
 
-        if (retries === 0) {
-        throw err;
-        }
+        console.error(
+          `Attempt ${i + 1} failed:`,
+          err.message
+        );
 
         await new Promise(resolve =>
-        setTimeout(resolve, 2000)
+          setTimeout(resolve, 2000)
         );
+      }
     }
+
+    if (!response) {
+      throw lastError;
     }
 
     res.json({
@@ -82,13 +93,16 @@ Return ONLY valid JSON.
 
   } catch (err) {
 
-    console.error(err);
+    console.error(
+      "ANALYZE ERROR:",
+      err
+    );
 
     res.status(500).json({
-    error:
-        "AI service temporarily busy. Please try again in a few seconds."
+      error:
+        err?.message ||
+        "AI service temporarily unavailable"
     });
-
   }
 });
 
