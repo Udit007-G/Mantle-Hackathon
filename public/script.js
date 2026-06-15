@@ -106,10 +106,22 @@ async function analyzeToken() {
 
     const data = await response.json();
 
+    if (!response.ok) {
+    throw new Error(
+        data.error || "Server error"
+    );
+    }
+
+    if (!data.result) {
+    throw new Error(
+        "No analysis returned"
+    );
+    }
+
     let cleaned = data.result
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
+    .replace(/```json/g, "")
+    .replace(/```/g, "")
+    .trim();
 
     const firstBrace =
       cleaned.indexOf("{");
@@ -177,7 +189,7 @@ async function analyzeToken() {
     console.error(error);
 
     document.getElementById("result").innerHTML =
-    "<p>Failed to analyze token.</p>";
+    `<p>Error: ${error.message}</p>`;
   }
 }
 
