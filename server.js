@@ -55,9 +55,3 @@ Return ONLY valid JSON.
     });
   }
 });
-
-app.get("/test", (req, res) => {
-  res.send("Vercel is working");
-});
-
-module.exports = app;
